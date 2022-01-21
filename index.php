@@ -104,24 +104,31 @@ function printToolbar()
 {
 	global $upage, $page, $action;
 
-	print "<div class=\"toolbar\">";
-	print "<a class=\"tool first\" href=\"" . SELF . "?action=edit&amp;page=$upage\">Edit</a> ";
+	print "<div class=\"toolbar\"><div class='toolbar-inner'>";
+
+	print "<a class=\"tool\" href=\"" . SELF . "\">". DEFAULT_PAGE . "</a>";
+ 	print "<a class=\"tool\" href=\"" . SELF . "?action=all_name\">All</a> ";
+	print "<a class=\"tool\" href=\"" . SELF . "?action=all_date\">Recent</a> ";
+ 	
+	print "</div><div class='toolbar-inner'>";
+
+	print "<form method=\"post\" action=\"" . SELF . "?action=search\">\n";
+	print "<input class=\"tool\" placeholder=\"Search\" size=\"6\" id=\"search\" type=\"text\" name=\"q\" />";
+	print "</form>\n";
+
+	print "</div><div class='toolbar-inner'>";
+
 	print "<a class=\"tool\" href=\"" . SELF . "?action=new\">New</a> ";
+	if ($action == "view")
+		print "<a class=\"tool first\" href=\"" . SELF . "?action=edit&amp;page=$upage\">Edit</a> ";
 
 	if ( !DISABLE_UPLOADS )
 		print "<a class=\"tool\" href=\"" . SELF . VIEW . "?action=upload\">Upload</a> ";
 
- 	print "<a class=\"tool\" href=\"" . SELF . "?action=all_name\">All</a> ";
-	print "<a class=\"tool\" href=\"" . SELF . "?action=all_date\">Recent</a> ";
- 	print "<a class=\"tool\" href=\"" . SELF . "\">". DEFAULT_PAGE . "</a>";
- 	
 	if ( REQUIRE_PASSWORD )
-		print '<a class="tool" href="' . SELF . '?action=logout">Exit</a>';
+		print '<a class="tool logout" href="' . SELF . '?action=logout">Logout</a>';
 
-	print "<form method=\"post\" action=\"" . SELF . "?action=search\">\n";
-	print "<input class=\"tool\" placeholder=\"Search\" size=\"6\" id=\"search\" type=\"text\" name=\"q\" /></form>\n";
-		
-	print "</div>\n";
+	print "</div></div>\n";
 }
 
 
@@ -342,7 +349,6 @@ else if ( $action == "save" )
 
 	$html .= toHTML($newText);
 }
-
 else if ( $action == "rename" )
 {
 	$html = "<form id=\"rename\" method=\"post\" action=\"" . SELF . "\">";
