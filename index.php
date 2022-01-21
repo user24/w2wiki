@@ -120,7 +120,7 @@ function printToolbar()
 	print "</div><div class='toolbar-inner'>";
 
 	print "<a class=\"tool\" href=\"" . SELF . "?action=new\">New</a> ";
-	if ($action == "view")
+	if ($action == "view" || $action == "save")
 		print "<a class=\"tool first\" href=\"" . SELF . "?action=edit&amp;page=$upage\">Edit</a> ";
 
 	if ( !DISABLE_UPLOADS )
