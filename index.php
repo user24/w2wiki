@@ -81,6 +81,7 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 }
 
 // Support functions
+$_VALID_ACTIONS = array("save", "all_name", "all_date", "upload", "new", "logout", "uploaded", "search", "view", "rename", "renamed", "delete", "deleted");
 
 function _handle_links($match)
 {
@@ -133,7 +134,7 @@ function descLengthSort($val_1, $val_2)
 	$secondVal = strlen($val_2);
 
 	if ( $firstVal > $secondVal ) 
-		$retVal = -1; 
+		$retVal = -1;
 	
 	else if ( $firstVal < $secondVal ) 
 		$retVal = 1; 
@@ -245,7 +246,7 @@ if ( file_exists($filename) )
 }
 else
 {
-	if ( $action != "save" && $action != "all_name" && $action != "all_date" && $action != "upload" && $action != "new" && $action != "logout" && $action != "uploaded" && $action != "search" && $action != "view" && $action != "rename" && $action != "renamed" )
+	if ( !array_key_exists($action, $_VALID_ACTIONS) )
 	{
 		$action = "edit";
 	}
@@ -343,6 +344,29 @@ else if ( $action == "save" )
 	$html .= toHTML($newText);
 }
 
+else if ( $action == "delete" )
+{
+	$html = "<form id=\"delete\" method=\"post\" action=\"" . SELF . "\">";
+	$html .= "<p>Delete page: ".htmlspecialchars($page) . "?<br />";
+	$html .= "<input id=\"delete\" type=\"submit\" value=\"Delete\">";
+	$html .= "<input id=\"cancel\" type=\"button\" onclick=\"history.go(-1);\" value=\"Cancel\" />\n";
+	$html .= "<input type=\"hidden\" name=\"action\" value=\"deleted\" />";
+	$html .= "<input type=\"hidden\" name=\"page\" value=\"" . htmlspecialchars($page) . "\" />";
+	$html .= "</p></form>";
+}
+else if ( $action == "deleted" )
+{
+	$pg = $_REQUEST['page'];
+
+	if ( unlink( PAGES_PATH . "/$pg.txt") )
+	{
+		$html = "<p class=\"note\">Deleted file.</p>\n";
+	}
+	else
+	{
+		$html = "<p class=\"note\">Error deleting file</p>\n";
+	}
+}
 else if ( $action == "rename" )
 {
 	$html = "<form id=\"rename\" method=\"post\" action=\"" . SELF . "\">";
@@ -400,8 +424,9 @@ else if ( $action == "all_name" )
 		$afile = preg_replace("/(.*?)\.txt/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file);
 		$efile = preg_replace("/(.*?)\.txt/", "<a href=\"?action=edit&amp;page=\\1\">edit</a>", urlencode($file));
 		$rfile = preg_replace("/(.*?)\.txt/", "<a href=\"?action=rename&amp;page=\\1\">rename</a>", urlencode($file));
+		$dfile = preg_replace("/(.*?)\.txt/", "<a href=\"?action=delete&amp;page=\\1\">delete</a>", urlencode($file));
 
-		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td><td>$rfile</td></tr>");
+		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td><td>$rfile</td><td>$dfile</td></tr>");
 
 		if ( $color == "#ffffff" )
 			$color = "#f4f4f4";
@@ -414,7 +439,6 @@ else if ( $action == "all_name" )
 	natcasesort($filelist);
 	
 	$html = "<table>";
-
 
 	for ($i = 0; $i < count($filelist); $i++)
 	{
