@@ -81,7 +81,7 @@ if ( REQUIRE_PASSWORD && !isset($_SESSION['password']) )
 }
 
 // Support functions
-$_VALID_ACTIONS = array("save", "all_name", "all_date", "upload", "new", "logout", "uploaded", "search", "view", "rename", "renamed", "delete", "deleted");
+$_VALID_ACTIONS = array("save", "all_name", "upload", "new", "logout", "uploaded", "search", "view", "rename", "renamed", "delete", "deleted");
 
 function _handle_links($match)
 {
@@ -107,14 +107,13 @@ function printToolbar()
 
 	print "<div class=\"toolbar\"><div class='toolbar-inner'>";
 
-	print "<a class=\"tool\" href=\"" . SELF . "\">". DEFAULT_PAGE . "</a>";
- 	print "<a class=\"tool\" href=\"" . SELF . "?action=all_name\">All</a> ";
-	print "<a class=\"tool\" href=\"" . SELF . "?action=all_date\">Recent</a> ";
+	//print "<a class=\"tool\" href=\"" . SELF . "\">". DEFAULT_PAGE . "</a>";
+ 	print "<a class=\"tool\" href=\"" . SELF . "?action=all_name\">Index</a> ";
  	
-	print "</div><div class='toolbar-inner'>";
+	print "</div><div class='toolbar-inner search-toolbar'>";
 
 	print "<form method=\"post\" action=\"" . SELF . "?action=search\">\n";
-	print "<input class=\"tool\" placeholder=\"Search\" size=\"6\" id=\"search\" type=\"text\" name=\"q\" />";
+	print "<input class=\"tool\" placeholder=\"Search\" id=\"search\" type=\"text\" name=\"q\" />";
 	print "</form>\n";
 
 	print "</div><div class='toolbar-inner'>";
@@ -242,8 +241,10 @@ else
 
 $upage = urlencode($page);
 
-if ( $page == "" )
-	$page = DEFAULT_PAGE;
+if ( $action == "" && $page == "" ) {
+	$action = 'all_name';
+	//$page = DEFAULT_PAGE;
+}
 
 $filename = PAGES_PATH . "/$page.txt";
 
@@ -426,8 +427,9 @@ else if ( $action == "all_name" )
 		$efile = preg_replace("/(.*?)\.txt/", "<a href=\"?action=edit&amp;page=\\1\">edit</a>", urlencode($file));
 		$rfile = preg_replace("/(.*?)\.txt/", "<a href=\"?action=rename&amp;page=\\1\">rename</a>", urlencode($file));
 		$dfile = preg_replace("/(.*?)\.txt/", "<a href=\"?action=delete&amp;page=\\1\">delete</a>", urlencode($file));
+		$mod = date(TITLE_DATE, filemtime(PAGES_PATH . "/$file"));
 
-		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td><td>$rfile</td><td>$dfile</td></tr>");
+		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td><td>$rfile</td><td>$dfile</td><td>$mod</td></tr>");
 
 		if ( $color == "#ffffff" )
 			$color = "#f4f4f4";
@@ -437,7 +439,8 @@ else if ( $action == "all_name" )
 
 	closedir($dir);
 
-	natcasesort($filelist);
+	//natcasesort($filelist);
+	arsort($filelist, SORT_NUMERIC);
 	
 	$html = "<table>";
 
@@ -446,35 +449,6 @@ else if ( $action == "all_name" )
 		$html .= $filelist[$i];
 	}
 
-	$html .= "</table>\n";
-}
-else if ( $action == "all_date" )
-{
-	$html = "<table>\n";
-	$dir = opendir(PAGES_PATH);
-	$filelist = array();
-	while ( $file = readdir($dir) )
-	{
-		if ( $file{0} == "." )
-			continue;
-			
-		$filelist[preg_replace("/(.*?)\.txt/", "<a href=\"" . SELF . VIEW . "/\\1\">\\1</a>", $file)] = filemtime(PAGES_PATH . "/$file");
-	}
-
-	closedir($dir);
-
-	$color = "#ffffff";
-	arsort($filelist, SORT_NUMERIC);
-
-	foreach ($filelist as $key => $value)
-	{
-		$html .= "<tr style=\"background-color: $color;\"><td valign=\"top\">$key</td><td width=\"20\"></td><td valign=\"top\"><nobr>" . date(TITLE_DATE_NO_TIME, $value) . "</nobr></td></tr>\n";
-		
-		if ( $color == "#ffffff" )
-			$color = "#f4f4f4";
-		else
-			$color = "#ffffff";
-	}
 	$html .= "</table>\n";
 }
 else if ( $action == "search" )
@@ -515,7 +489,7 @@ else
 
 $datetime = '';
 
-if ( ($action == "all_name") || ($action == "all_date"))
+if ( ($action == "all_name"))
 	$title = "All Pages";
 	
 else if ( $action == "upload" )

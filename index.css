@@ -144,17 +144,17 @@ textarea {
 	font-size: 12px;
 	padding: 4px 4px 4px 12px;
 	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
+	justify-content: center;
+	gap: 10px;
 }
 .toolbar-inner {
 	display: flex;
 	align-items: center;
 }
-.toolbar-inner:first-child {
-	flex-wrap: wrap;
+.search-toolbar {
+	flex-grow: 1;
+	max-width: 400px;
 }
-
 .tool {
 	font-size: 14px;
 }
@@ -182,8 +182,4 @@ img {
 
 #cancel {
 	margin-left: 50px;
-}
-
-#search {
-	width: 200px;
 }
