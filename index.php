@@ -246,7 +246,7 @@ if ( file_exists($filename) )
 }
 else
 {
-	if ( !array_key_exists($action, $_VALID_ACTIONS) )
+	if ( !in_array($action, $_VALID_ACTIONS) )
 	{
 		$action = "edit";
 	}
@@ -305,9 +305,7 @@ else if ( $action == "uploaded" )
 		if (in_array($fileType, explode(',', VALID_UPLOAD_TYPES)) &&
 			in_array($fileExt, explode(',', VALID_UPLOAD_EXTS)))
 		{
-			$errLevel = error_reporting(0);
-
-			if ( move_uploaded_file($_FILES['userfile']['tmp_name'], 
+			if ( @move_uploaded_file($_FILES['userfile']['tmp_name'], 
 				BASE_PATH . "/images/$dstName") === true ) 
 			{
 				$html = "<p class=\"note\">File '$dstName' uploaded<br />";
@@ -319,8 +317,6 @@ else if ( $action == "uploaded" )
 			{
 				$html = "<p class=\"note\">Upload error</p>\n";
 			}
-
-			error_reporting($errLevel);
 		} else {
 			$html = "<p class=\"note\">Upload error: invalid file type</p>\n";
 		}
@@ -332,9 +328,7 @@ else if ( $action == "save" )
 {
 	$newText = $_REQUEST['newText'];
 
-	$errLevel = error_reporting(0);
-	$success = file_put_contents($filename, $newText);
- 	error_reporting($errLevel);
+	$success = @file_put_contents($filename, $newText);
 
 	if ( $success )	
 		$html = "<p class=\"note\">Saved</p>\n";
