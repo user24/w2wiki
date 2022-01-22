@@ -889,7 +889,7 @@ class MarkdownExtra extends \Michelf\Markdown {
 
 		$url = $this->encodeURLAttribute($url);
 
-		$result = "<a href=\"$url\"";
+		$result = "<a target='_blank' rel='external noreferrer' href=\"$url\"";
 		if (isset($title)) {
 			$title = $this->encodeAttribute($title);
 			$result .=  " title=\"$title\"";

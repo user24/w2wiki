@@ -455,7 +455,7 @@ else if ( $action == "search" )
 {
 	$matches = 0;
 	$q = $_REQUEST['q'];
-	$html = "<h1>Search: $q</h1>\n<ul>\n";
+	$html = "<h1>Search: ".htmlentities($q)."</h1>\n<ul>\n";
 
 	if ( trim($q) != "" )
 	{
