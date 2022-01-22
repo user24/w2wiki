@@ -114,6 +114,8 @@ textarea {
 
 .main {	
 	padding: 8px;
+	max-width: 1024px;
+	margin: auto;
 }
 
 .note {
@@ -131,6 +133,7 @@ textarea {
 	font-size: 18px;
 	font-weight: bold;
 	padding: 4px 4px 4px 12px;
+	text-align: center;
 }
 
 .titledate {

@@ -429,7 +429,7 @@ else if ( $action == "all_name" )
 		$dfile = preg_replace("/(.*?)\.txt/", "<a href=\"?action=delete&amp;page=\\1\">delete</a>", urlencode($file));
 		$mod = date(TITLE_DATE, filemtime(PAGES_PATH . "/$file"));
 
-		array_push($filelist, "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td><td>$rfile</td><td>$dfile</td><td>$mod</td></tr>");
+		$filelist[filemtime(PAGES_PATH . "/$file")] =  "<tr style=\"background-color: $color;\"><td>$afile</td><td width=\"20\"></td><td>$efile</td><td>$rfile</td><td>$dfile</td><td>$mod</td></tr>";
 
 		if ( $color == "#ffffff" )
 			$color = "#f4f4f4";
@@ -440,13 +440,13 @@ else if ( $action == "all_name" )
 	closedir($dir);
 
 	//natcasesort($filelist);
-	arsort($filelist, SORT_NUMERIC);
+	krsort($filelist, SORT_NUMERIC);
 	
 	$html = "<table>";
 
-	for ($i = 0; $i < count($filelist); $i++)
+	foreach ($filelist as $time => $tr)
 	{
-		$html .= $filelist[$i];
+		$html .= $tr;
 	}
 
 	$html .= "</table>\n";
